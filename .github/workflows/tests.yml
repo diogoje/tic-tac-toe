@@ -36,3 +36,12 @@ jobs:
 
       - name: Install project
         run: poetry install --no-interaction
+
+      - name: Lint
+        run: |
+          poetry run mypy tic_tac_toe tests
+          poetry run ruff tic_tac_toe tests
+
+      - name: Test
+        run: |
+          poetry run pytest tests
