@@ -1,8 +1,11 @@
-from typing import Optional
 import pytest
 
-
-from tic_tac_toe.board.board import Board, NotEmptyCellError, PlayerTurnError
+from tic_tac_toe.board.board import (
+    Board,
+    GameStatus,
+    NonEmptyCellError,
+    PlayerTurnError,
+)
 from tic_tac_toe.board.cell import CellStatus, CellPosition
 from tic_tac_toe.board.player_id import PlayerId
 
@@ -86,19 +89,19 @@ def test_board_print(
 
 
 def test_raises_cell_not_empty() -> None:
-    with pytest.raises(NotEmptyCellError):
+    with pytest.raises(NonEmptyCellError):
         (
             Board()
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.CENTER)
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.CENTER)
         )
-    with pytest.raises(NotEmptyCellError):
+    with pytest.raises(NonEmptyCellError):
         (
             Board()
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.CENTER)
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.CENTER)
         )
-    with pytest.raises(NotEmptyCellError):
+    with pytest.raises(NonEmptyCellError):
         (
             Board()
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.NORTH_EAST)
@@ -109,20 +112,23 @@ def test_raises_cell_not_empty() -> None:
 
 
 @pytest.mark.parametrize(
-    ("board", "winner"),
+    ("board", "game_status"),
     (
-        (Board(), None),
+        (
+            Board(),
+            GameStatus.ONGOING,
+        ),
         (
             Board().play(
                 player_id=PlayerId.PLAYER_1, cell_position=CellPosition.CENTER
             ),
-            None,
+            GameStatus.ONGOING,
         ),
         (
             Board()
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.CENTER)
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.NORTH),
-            None,
+            GameStatus.ONGOING,
         ),
         # Center vertical
         (
@@ -132,7 +138,7 @@ def test_raises_cell_not_empty() -> None:
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.NORTH)
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.NORTH_WEST)
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.SOUTH),
-            PlayerId.PLAYER_1,
+            GameStatus.WINNER_PLAYER_1,
         ),
         # Center horizontal
         (
@@ -142,7 +148,7 @@ def test_raises_cell_not_empty() -> None:
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.EAST)
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.SOUTH_EAST)
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.WEST),
-            PlayerId.PLAYER_1,
+            GameStatus.WINNER_PLAYER_1,
         ),
         # North
         (
@@ -153,7 +159,7 @@ def test_raises_cell_not_empty() -> None:
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.NORTH)
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.EAST)
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.NORTH_WEST),
-            PlayerId.PLAYER_2,
+            GameStatus.WINNER_PLAYER_2,
         ),
         # Positive diagonal
         (
@@ -163,7 +169,7 @@ def test_raises_cell_not_empty() -> None:
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.SOUTH_WEST)
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.WEST)
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.NORTH_EAST),
-            PlayerId.PLAYER_1,
+            GameStatus.WINNER_PLAYER_1,
         ),
         # Negative diagonal
         (
@@ -173,7 +179,7 @@ def test_raises_cell_not_empty() -> None:
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.SOUTH_EAST)
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.EAST)
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.NORTH_WEST),
-            PlayerId.PLAYER_1,
+            GameStatus.WINNER_PLAYER_1,
         ),
         # South
         (
@@ -184,7 +190,7 @@ def test_raises_cell_not_empty() -> None:
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.SOUTH_EAST)
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.NORTH_WEST)
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.SOUTH_WEST),
-            PlayerId.PLAYER_2,
+            GameStatus.WINNER_PLAYER_2,
         ),
         (
             Board()
@@ -197,7 +203,7 @@ def test_raises_cell_not_empty() -> None:
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.SOUTH)
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.NORTH)
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.SOUTH_EAST),
-            None,
+            GameStatus.DRAW,
         ),
         # East
         (
@@ -211,7 +217,7 @@ def test_raises_cell_not_empty() -> None:
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.NORTH_EAST)
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.SOUTH)
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.SOUTH_EAST),
-            PlayerId.PLAYER_1,
+            GameStatus.WINNER_PLAYER_1,
         ),
         # West
         (
@@ -224,12 +230,12 @@ def test_raises_cell_not_empty() -> None:
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.SOUTH_EAST)
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.SOUTH)
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.WEST),
-            PlayerId.PLAYER_2,
+            GameStatus.WINNER_PLAYER_2,
         ),
     ),
 )
-def test_end_game(board: Board, winner: Optional[PlayerId]) -> None:
-    assert board.get_winner() == winner
+def test_game_status(board: Board, game_status: GameStatus) -> None:
+    assert board.game_status == game_status
 
 
 def test_playing_order() -> None:
@@ -242,6 +248,7 @@ def test_playing_order() -> None:
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.CENTER)
             .play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.EAST)
         )
+
     with pytest.raises(PlayerTurnError):
         (
             Board()
