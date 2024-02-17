@@ -1,5 +1,5 @@
 from __future__ import annotations
-from enum import Enum, auto
+from enum import Enum
 
 from tic_tac_toe.board.cell import CellStatus, CellPosition
 from tic_tac_toe.board.mappings import (
@@ -108,8 +108,8 @@ class Board(Board_Data_Structure):
 
 
 class GameStatus(Enum):
-    ONGOING = auto()
-    DRAW = auto()
+    ONGOING = "ongoing"
+    DRAW = "draw"
     WINNER_PLAYER_1 = PlayerId.PLAYER_1
     WINNER_PLAYER_2 = PlayerId.PLAYER_2
 
