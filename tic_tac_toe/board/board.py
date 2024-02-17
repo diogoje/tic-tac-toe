@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional
+from enum import Enum, auto
 
 from tic_tac_toe.board.cell import CellStatus, CellPosition
 from tic_tac_toe.board.mappings import (
@@ -14,8 +14,6 @@ Board_Data_Structure = list[list[CellStatus]]
 
 
 class Board(Board_Data_Structure):
-    player_turn = PlayerId.PLAYER_1
-
     def __init__(self) -> None:
         super().__init__([[CellStatus.EMPTY] * 3 for _ in range(3)])
 
@@ -33,26 +31,34 @@ class Board(Board_Data_Structure):
         )
 
     def play(self, player_id: PlayerId, cell_position: CellPosition) -> Board:
-        if not self._is_correct_player_turn(player_id):
-            raise PlayerTurnError(f"This is player {self.player_turn} turn.")
+        if not self._is_player_turn(player_id):
+            raise PlayerTurnError(f"This is player {self.player_in_turn} turn.")
 
-        if not self._cell_is_empty(cell_position):
-            raise NotEmptyCellError(
+        if not self._is_empty_cell(cell_position):
+            raise NonEmptyCellError(
                 f"Player {CELL_STATUS_PLAYER_ID_MAPPING[self._get_cell_status(cell_position)]}"
                 f" already played in the {cell_position} cell."
             )
 
-        self.player_turn = (
-            PlayerId.PLAYER_2 if player_id == PlayerId.PLAYER_1 else PlayerId.PLAYER_1
-        )
         self._set_cell_status(player_id, cell_position)
-
         return self
 
-    def _is_correct_player_turn(self, player_id: PlayerId) -> bool:
-        return player_id == self.player_turn
+    def _is_player_turn(self, player_id: PlayerId) -> bool:
+        return player_id == self.player_in_turn
 
-    def _cell_is_empty(self, cell_position: CellPosition) -> bool:
+    @property
+    def player_in_turn(self) -> PlayerId:
+        return (
+            PlayerId.PLAYER_1
+            if self.non_empty_cells_count % 2 == 0
+            else PlayerId.PLAYER_2
+        )
+
+    @property
+    def non_empty_cells_count(self) -> int:
+        return sum(1 for row in self for cell in row if cell != CellStatus.EMPTY)
+
+    def _is_empty_cell(self, cell_position: CellPosition) -> bool:
         return self._get_cell_status(cell_position) == CellStatus.EMPTY
 
     def _get_cell_status(self, cell_position: CellPosition) -> CellStatus:
@@ -67,12 +73,16 @@ class Board(Board_Data_Structure):
 
         self[cell_row][cell_column] = cell_status
 
-    def get_winner(self) -> Optional[PlayerId]:
+    @property
+    def game_status(self) -> GameStatus:
         for line in self._get_lines_of_three():
             if self._is_three_in_a_line(line):
-                return CELL_STATUS_PLAYER_ID_MAPPING[line[0]]
+                return GameStatus(CELL_STATUS_PLAYER_ID_MAPPING[line[0]])
 
-        return None
+        if self._is_board_full():
+            return GameStatus.DRAW
+
+        return GameStatus.ONGOING
 
     def _get_lines_of_three(self) -> Board_Data_Structure:
         return self + self._get_transposed_board() + self._get_board_diagonals()
@@ -92,8 +102,18 @@ class Board(Board_Data_Structure):
             cell == first_cell and first_cell != CellStatus.EMPTY for cell in line
         )
 
+    def _is_board_full(self) -> bool:
+        return self.non_empty_cells_count == 9
 
-class NotEmptyCellError(Exception):
+
+class GameStatus(Enum):
+    ONGOING = auto()
+    DRAW = auto()
+    WINNER_PLAYER_1 = PlayerId.PLAYER_1
+    WINNER_PLAYER_2 = PlayerId.PLAYER_2
+
+
+class NonEmptyCellError(Exception):
     pass
 
 
