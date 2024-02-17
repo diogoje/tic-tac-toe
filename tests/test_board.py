@@ -6,7 +6,7 @@ from tic_tac_toe.board.board import (
     NonEmptyCellError,
     PlayerTurnError,
 )
-from tic_tac_toe.board.cell import CellStatus, CellPosition
+from tic_tac_toe.board.cell import CellPosition, CellStatus
 from tic_tac_toe.board.player_id import PlayerId
 
 
