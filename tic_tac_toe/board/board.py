@@ -1,14 +1,14 @@
 from __future__ import annotations
+
 from enum import Enum
 
-from tic_tac_toe.board.cell import CellStatus, CellPosition
+from tic_tac_toe.board.cell import CellPosition, CellStatus
 from tic_tac_toe.board.mappings import (
     CELL_POSITION_BOARD_POSITION_MAPPING,
     CELL_STATUS_PLAYER_ID_MAPPING,
     PLAYER_ID_CELL_STATUS_MAPPING,
 )
 from tic_tac_toe.board.player_id import PlayerId
-
 
 Board_Line = list[CellStatus]
 Board_Data_Structure = list[list[CellStatus]]

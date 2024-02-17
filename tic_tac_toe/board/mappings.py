@@ -1,6 +1,5 @@
-from tic_tac_toe.board.cell import CellStatus, CellPosition
+from tic_tac_toe.board.cell import CellPosition, CellStatus
 from tic_tac_toe.board.player_id import PlayerId
-
 
 PLAYER_ID_CELL_STATUS_MAPPING = {
     PlayerId.PLAYER_1: CellStatus.PLAYER_1,
