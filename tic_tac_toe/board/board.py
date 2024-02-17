@@ -3,6 +3,7 @@ from enum import Enum, auto
 
 from tic_tac_toe.board.cell import CellStatus, CellPosition
 from tic_tac_toe.board.mappings import (
+    CELL_POSITION_BOARD_POSITION_MAPPING,
     CELL_STATUS_PLAYER_ID_MAPPING,
     PLAYER_ID_CELL_STATUS_MAPPING,
 )
@@ -62,13 +63,13 @@ class Board(Board_Data_Structure):
         return self._get_cell_status(cell_position) == CellStatus.EMPTY
 
     def _get_cell_status(self, cell_position: CellPosition) -> CellStatus:
-        cell_row, cell_column = cell_position.value
+        cell_row, cell_column = CELL_POSITION_BOARD_POSITION_MAPPING[cell_position]
         return self[cell_row][cell_column]
 
     def _set_cell_status(
         self, player_id: PlayerId, cell_position: CellPosition
     ) -> None:
-        cell_row, cell_column = cell_position.value
+        cell_row, cell_column = CELL_POSITION_BOARD_POSITION_MAPPING[cell_position]
         cell_status = PLAYER_ID_CELL_STATUS_MAPPING[player_id]
 
         self[cell_row][cell_column] = cell_status
