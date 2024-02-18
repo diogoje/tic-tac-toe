@@ -19,18 +19,6 @@ def user_player_2() -> UserPlayer:
     return UserPlayer(PlayerId.PLAYER_2)
 
 
-@pytest.fixture
-def empty_board() -> Board:
-    return Board()
-
-
-@pytest.fixture
-def one_play_board(empty_board: Board) -> Board:
-    return empty_board.play(
-        player_id=PlayerId.PLAYER_1, cell_position=CellPosition.CENTER
-    )
-
-
 @pytest.mark.parametrize(
     ("cell_position_input", "expected_cell_position"),
     (
