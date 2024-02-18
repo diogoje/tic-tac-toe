@@ -37,7 +37,8 @@ class Board(Board_Data_Structure):
 
         if not self._is_empty_cell(cell_position):
             raise NonEmptyCellError(
-                f"Player {CELL_STATUS_PLAYER_ID_MAPPING[self._get_cell_status(cell_position)]}"
+                "Player "
+                f"{CELL_STATUS_PLAYER_ID_MAPPING[self._get_cell_status(cell_position)]}"
                 f" already played in the {cell_position} cell."
             )
 
