@@ -11,16 +11,6 @@ from tic_tac_toe.board.player_id import PlayerId
 
 
 @pytest.fixture
-def empty_board() -> Board:
-    return Board()
-
-
-@pytest.fixture
-def one_play_board() -> Board:
-    return Board().play(player_id=PlayerId.PLAYER_1, cell_position=CellPosition.CENTER)
-
-
-@pytest.fixture
 def two_play_board() -> Board:
     return (
         Board()
