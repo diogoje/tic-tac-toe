@@ -10,7 +10,7 @@ from tic_tac_toe.board.cell import CellPosition, CellStatus
 from tic_tac_toe.board.player_id import PlayerId
 
 
-@pytest.fixture
+@pytest.fixture()
 def two_play_board() -> Board:
     return (
         Board()
@@ -19,7 +19,7 @@ def two_play_board() -> Board:
     )
 
 
-@pytest.fixture
+@pytest.fixture()
 def full_board() -> Board:
     return (
         Board()
@@ -37,7 +37,7 @@ def full_board() -> Board:
 
 @pytest.mark.parametrize(
     ("board_fixture", "board_print"),
-    (
+    [
         (
             "empty_board",
             f"\n{CellStatus.EMPTY} | {CellStatus.EMPTY} | {CellStatus.EMPTY}"
@@ -70,10 +70,12 @@ def full_board() -> Board:
             f"\n---------"
             f"\n{CellStatus.PLAYER_2} | {CellStatus.PLAYER_1} | {CellStatus.PLAYER_1}",
         ),
-    ),
+    ],
 )
 def test_board_print(
-    board_fixture: str, board_print: str, request: pytest.FixtureRequest
+    board_fixture: str,
+    board_print: str,
+    request: pytest.FixtureRequest,
 ) -> None:
     assert str(request.getfixturevalue(board_fixture)) == board_print
 
@@ -103,14 +105,15 @@ def test_raises_cell_not_empty() -> None:
 
 @pytest.mark.parametrize(
     ("board", "game_status"),
-    (
+    [
         (
             Board(),
             GameStatus.ONGOING,
         ),
         (
             Board().play(
-                player_id=PlayerId.PLAYER_1, cell_position=CellPosition.CENTER
+                player_id=PlayerId.PLAYER_1,
+                cell_position=CellPosition.CENTER,
             ),
             GameStatus.ONGOING,
         ),
@@ -222,7 +225,7 @@ def test_raises_cell_not_empty() -> None:
             .play(player_id=PlayerId.PLAYER_2, cell_position=CellPosition.WEST),
             GameStatus.WINNER_PLAYER_2,
         ),
-    ),
+    ],
 )
 def test_game_status(board: Board, game_status: GameStatus) -> None:
     assert board.game_status == game_status

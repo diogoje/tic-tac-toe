@@ -5,13 +5,14 @@ from tic_tac_toe.board.cell import CellPosition
 from tic_tac_toe.board.player_id import PlayerId
 
 
-@pytest.fixture
+@pytest.fixture()
 def empty_board() -> Board:
     return Board()
 
 
-@pytest.fixture
+@pytest.fixture()
 def one_play_board(empty_board: Board) -> Board:
     return empty_board.play(
-        player_id=PlayerId.PLAYER_1, cell_position=CellPosition.CENTER
+        player_id=PlayerId.PLAYER_1,
+        cell_position=CellPosition.CENTER,
     )

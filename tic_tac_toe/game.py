@@ -1,18 +1,22 @@
-from typing import Literal, Protocol
+from typing import Literal, Protocol, Self
 
 from tic_tac_toe.board.board import Board, GameStatus
 from tic_tac_toe.board.player_id import PlayerId
 
 Result = Literal[
-    GameStatus.DRAW, GameStatus.WINNER_PLAYER_1, GameStatus.WINNER_PLAYER_2
+    GameStatus.DRAW,
+    GameStatus.WINNER_PLAYER_1,
+    GameStatus.WINNER_PLAYER_2,
 ]
 
 
 class Player(Protocol):
     @property
-    def player_id(self) -> PlayerId: ...
+    def player_id(self: Self) -> PlayerId:
+        ...
 
-    def play(self, board: Board) -> Board: ...
+    def play(self: Self, board: Board) -> Board:
+        ...
 
 
 def game(board: Board, player_1: Player, player_2: Player) -> Result:
@@ -32,10 +36,18 @@ def _verify_player_ids(player_1: Player, player_2: Player) -> None:
         or player_2.player_id != PlayerId.PLAYER_2
     ):
         raise PlayerIdError(
-            f"Player IDs provided: {player_1.player_id} and {player_2.player_id}."
-            f" Expected: {PlayerId.PLAYER_1} and {PlayerId.PLAYER_2}."
+            first_player_id=player_1.player_id,
+            second_player_id=player_2.player_id,
         )
 
 
 class PlayerIdError(Exception):
-    pass
+    def __init__(
+        self: Self,
+        first_player_id: PlayerId,
+        second_player_id: PlayerId,
+    ) -> None:
+        super().__init__(
+            f"Player IDs provided: {first_player_id} and {second_player_id}."
+            f" Expected: {PlayerId.PLAYER_1} and {PlayerId.PLAYER_2}.",
+        )

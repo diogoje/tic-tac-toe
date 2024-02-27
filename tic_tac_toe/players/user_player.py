@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Self
 
 from tic_tac_toe.board.board import Board, NonEmptyCellError
 from tic_tac_toe.board.cell import CellPosition
@@ -10,7 +11,7 @@ from tic_tac_toe.board.player_id import PlayerId
 class UserPlayer:
     player_id: PlayerId
 
-    def play(self, board: Board) -> Board:
+    def play(self: Self, board: Board) -> Board:
         print(board, end="\n" * 2)
 
         cell_position_input = self._request_first_input()
@@ -26,12 +27,12 @@ class UserPlayer:
 
         return board
 
-    def _request_first_input(self) -> str:
+    def _request_first_input(self: Self) -> str:
         return input(
             f"Player {self.player_id} turn:"
             f" {PLAYER_ID_CELL_STATUS_MAPPING[self.player_id]}\n"
-            "Where do you want to play next? "
+            "Where do you want to play next? ",
         )
 
-    def _request_input_after_invalid_input(self) -> str:
+    def _request_input_after_invalid_input(self: Self) -> str:
         return input("Invalid cell position. Try again: ")
