@@ -9,19 +9,19 @@ from tic_tac_toe.board.player_id import PlayerId
 from tic_tac_toe.players.user_player import UserPlayer
 
 
-@pytest.fixture
+@pytest.fixture()
 def user_player_1() -> UserPlayer:
     return UserPlayer(PlayerId.PLAYER_1)
 
 
-@pytest.fixture
+@pytest.fixture()
 def user_player_2() -> UserPlayer:
     return UserPlayer(PlayerId.PLAYER_2)
 
 
 @pytest.mark.parametrize(
     ("cell_position_input", "expected_cell_position"),
-    (
+    [
         ("north_west", CellPosition.NORTH_WEST),
         ("north", CellPosition.NORTH),
         ("north_east", CellPosition.NORTH_EAST),
@@ -31,7 +31,7 @@ def user_player_2() -> UserPlayer:
         ("south_west", CellPosition.SOUTH_WEST),
         ("south", CellPosition.SOUTH),
         ("south_east", CellPosition.SOUTH_EAST),
-    ),
+    ],
 )
 def test_user_player_valid_play(
     user_player_1: UserPlayer,
@@ -50,12 +50,12 @@ def test_user_player_valid_play(
 
 @pytest.mark.parametrize(
     "cell_position_consecutive_inputs",
-    (
+    [
         ["", " ", "up", "north"],
         ["down", "south"],
         ["right", "east"],
         ["center", "south"],
-    ),
+    ],
 )
 def test_user_player_invalid_play(
     user_player_2: UserPlayer,
